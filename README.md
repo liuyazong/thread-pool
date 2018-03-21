@@ -16,21 +16,21 @@
 * 继承`Thread`类并重写`run`方法
 
 
-    Thread thread = new Thread() {
-        @Override
-        public void run() {
-            log.debug("thread test");
-        }
-    };
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                log.debug("thread test");
+            }
+        };
     
     
 * 实现`Runnable`接口
 
 
-    Runnable runnable = () -> {
-        log.debug("thread runnable test");
-    };
-    Thread thread = new Thread(runnable);
+        Runnable runnable = () -> {
+            log.debug("thread runnable test");
+        };
+        Thread thread = new Thread(runnable);
         
 
 ### 线程启动
@@ -38,17 +38,17 @@
 要想启动一个线程，只需调用该线程的`start`方法即可
 
 
-    thread.start();
+        thread.start();
 
 ## 线程池
 
 线程池接口`java.util.concurrent.Executor`，其主要实现类有
 
-    `java.util.concurrent.ThreadPoolExecutor`
-    
-    `java.util.concurrent.ScheduledThreadPoolExecutor`
-    
-    `java.util.concurrent.ForkJoinPool`
+        `java.util.concurrent.ThreadPoolExecutor`
+        
+        `java.util.concurrent.ScheduledThreadPoolExecutor`
+        
+        `java.util.concurrent.ForkJoinPool`
 
 这三个类都直接或间接的继承了抽象类`java.util.concurrent.AbstractExecutorService`。
 
@@ -58,13 +58,13 @@
 
 构造器
 
-    public ThreadPoolExecutor(int corePoolSize,
-                              int maximumPoolSize,
-                              long keepAliveTime,
-                              TimeUnit unit,
-                              BlockingQueue<Runnable> workQueue,
-                              ThreadFactory threadFactory,
-                              RejectedExecutionHandler handler)
+        public ThreadPoolExecutor(int corePoolSize,
+                                  int maximumPoolSize,
+                                  long keepAliveTime,
+                                  TimeUnit unit,
+                                  BlockingQueue<Runnable> workQueue,
+                                  ThreadFactory threadFactory,
+                                  RejectedExecutionHandler handler)
 
 还有几个重载的构造器与此类似。
 
@@ -98,23 +98,23 @@ Java提供了4个实现：
 
 #### 示例代码
 
-    ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-            4,
-            8,
-            0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(2),
-            Executors.defaultThreadFactory(),
-            (r, executor) -> log.debug("just ignore {},executor {}", r, executor));
-    log.debug("executor {}", threadPoolExecutor);
-    for (int i = 0; i < 16; i++) {
-        threadPoolExecutor.submit(() -> {
-            try {
-                Thread.sleep(3000);
-                log.debug("thread {} execute", Thread.currentThread());
-            } catch (InterruptedException e) {
-            }
-        });
-    }
-    threadPoolExecutor.shutdown();
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
+                4,
+                8,
+                0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(2),
+                Executors.defaultThreadFactory(),
+                (r, executor) -> log.debug("just ignore {},executor {}", r, executor));
+        log.debug("executor {}", threadPoolExecutor);
+        for (int i = 0; i < 16; i++) {
+            threadPoolExecutor.submit(() -> {
+                try {
+                    Thread.sleep(3000);
+                    log.debug("thread {} execute", Thread.currentThread());
+                } catch (InterruptedException e) {
+                }
+            });
+        }
+        threadPoolExecutor.shutdown();
 
 示例代码创建了一个`corePoolSize` = 4、`maximumPoolSize` = 8、`workQueue` size = 2、`handler`为仅打印并忽略任务的线程池。
 
@@ -134,26 +134,26 @@ Java提供了4个实现：
 线程饥饿死锁（`Thread Starvation Dead Lock`）
 
 
-    ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-            1,
-            8,
-            0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(2),
-            Executors.defaultThreadFactory(),
-            (r, executor) -> log.debug("just ignore {},executor {}", r, executor));
-
-    Callable<String> taskA = () -> {
-        Callable<String> taskB = () -> "task b";
-        Future<String> future = threadPoolExecutor.submit(taskB);
-        String resultOfTaskB = future.get();
-        log.debug("task b result: {}", resultOfTaskB);
-        return "task a ".concat(resultOfTaskB);
-    };
-
-    Future<String> future = threadPoolExecutor.submit(taskA);
-    String resultOfTaskA = future.get();
-    log.debug("task a result: {}", resultOfTaskA);
-
-    threadPoolExecutor.shutdown();
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
+                1,
+                8,
+                0, TimeUnit.SECONDS, new LinkedBlockingQueue<>(2),
+                Executors.defaultThreadFactory(),
+                (r, executor) -> log.debug("just ignore {},executor {}", r, executor));
+    
+        Callable<String> taskA = () -> {
+            Callable<String> taskB = () -> "task b";
+            Future<String> future = threadPoolExecutor.submit(taskB);
+            String resultOfTaskB = future.get();
+            log.debug("task b result: {}", resultOfTaskB);
+            return "task a ".concat(resultOfTaskB);
+        };
+    
+        Future<String> future = threadPoolExecutor.submit(taskA);
+        String resultOfTaskA = future.get();
+        log.debug("task a result: {}", resultOfTaskA);
+    
+        threadPoolExecutor.shutdown();
         
 如上代码，`taskA`将任务`taskB`提交到同一个`Executor`实例中，由于`corePoolSiz` = 1，
 taskB将进入`workQueue`中等待`taskA`执行结束，而`taskA`又在等待`taskB`的执行结果，从而导致了`taskA`、`taskB`互相等待对方的执行。
@@ -175,90 +175,90 @@ taskB将进入`workQueue`中等待`taskA`执行结束，而`taskA`又在等待`t
 `ThreadPoolExecutor`提供了三个未做任何操作的空方法，如下：
 
 
-    //任务执行前被调用
-    protected void beforeExecute(Thread t, Runnable r) { }
-    //任务执行后被调用
-    protected void afterExecute(Runnable r, Throwable t) { }
-    /线程池关闭时被调用
-    protected void terminated() { }
+        //任务执行前被调用
+        protected void beforeExecute(Thread t, Runnable r) { }
+        //任务执行后被调用
+        protected void afterExecute(Runnable r, Throwable t) { }
+        /线程池关闭时被调用
+        protected void terminated() { }
     
 可以重写这三个方法来实现对`ThreadPoolExecutor`的扩展，比如实现任务执行耗时统计／日志记录等。
 
 示例代码
 
-    //扩展ThreadPoolExecutor
-    class ExtThreadPoolExecutor extends ThreadPoolExecutor {
-
-        //记录线程开始执行的时间
-        private ThreadLocal<Long> startThreadLocal = new ThreadLocal<>();
-        //记录线程执行的总时间
-        private AtomicLong totalTime = new AtomicLong(0);
-        //记录已执行的线程数
-        private AtomicLong totalCount = new AtomicLong(0);
-
-        public ExtThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
-            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
-        }
-
-        public ExtThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {
-            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
-        }
-
-        public ExtThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler) {
-            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
-        }
-
-        public ExtThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
-            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
-        }
-
-        @Override
-        protected void beforeExecute(Thread t, Runnable r) {
-            super.beforeExecute(t, r);
-            startThreadLocal.set(System.currentTimeMillis());
-        }
-
-        @Override
-        protected void afterExecute(Runnable r, Throwable t) {
-            super.afterExecute(r, t);
-            if (t == null) {
-                Long start = startThreadLocal.get();
-                startThreadLocal.remove();
-                long thisTime = System.currentTimeMillis() - start;
-                long count = totalCount.addAndGet(1);
-                long total = totalTime.addAndGet(thisTime);
-                log.debug("task {} taking {} ms, average taking {} ms", r, thisTime, total / count);
-            } else {
-                log.error("task {} exception {}", r, t);
+        //扩展ThreadPoolExecutor
+        class ExtThreadPoolExecutor extends ThreadPoolExecutor {
+    
+            //记录线程开始执行的时间
+            private ThreadLocal<Long> startThreadLocal = new ThreadLocal<>();
+            //记录线程执行的总时间
+            private AtomicLong totalTime = new AtomicLong(0);
+            //记录已执行的线程数
+            private AtomicLong totalCount = new AtomicLong(0);
+    
+            public ExtThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
+                super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
             }
-        }
-
-        @Override
-        protected void terminated() {
-            super.terminated();
-            log.debug("threadPoolExecutor {} terminated", this);
-        }
-
-    }
-
-    //测试自己扩展的ExtThreadPoolExecutor
-    int nThreads = Runtime.getRuntime().availableProcessors();
-    ThreadPoolExecutor threadPoolExecutor = new ExtThreadPoolExecutor(
-            nThreads,
-            nThreads << 1,
-            0, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>());
-    for (int i = 0; i < nThreads << 1; i++) {
-        threadPoolExecutor.submit(() -> {
-            try {
-                Thread.sleep(new Random().nextInt(3000));
-                log.debug("current time: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    
+            public ExtThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {
+                super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
             }
-        });
-    }
-    threadPoolExecutor.shutdown();
+    
+            public ExtThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler) {
+                super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
+            }
+    
+            public ExtThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+                super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
+            }
+    
+            @Override
+            protected void beforeExecute(Thread t, Runnable r) {
+                super.beforeExecute(t, r);
+                startThreadLocal.set(System.currentTimeMillis());
+            }
+    
+            @Override
+            protected void afterExecute(Runnable r, Throwable t) {
+                super.afterExecute(r, t);
+                if (t == null) {
+                    Long start = startThreadLocal.get();
+                    startThreadLocal.remove();
+                    long thisTime = System.currentTimeMillis() - start;
+                    long count = totalCount.addAndGet(1);
+                    long total = totalTime.addAndGet(thisTime);
+                    log.debug("task {} taking {} ms, average taking {} ms", r, thisTime, total / count);
+                } else {
+                    log.error("task {} exception {}", r, t);
+                }
+            }
+    
+            @Override
+            protected void terminated() {
+                super.terminated();
+                log.debug("threadPoolExecutor {} terminated", this);
+            }
+    
+        }
+    
+        //测试自己扩展的ExtThreadPoolExecutor
+        int nThreads = Runtime.getRuntime().availableProcessors();
+        ThreadPoolExecutor threadPoolExecutor = new ExtThreadPoolExecutor(
+                nThreads,
+                nThreads << 1,
+                0, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>());
+        for (int i = 0; i < nThreads << 1; i++) {
+            threadPoolExecutor.submit(() -> {
+                try {
+                    Thread.sleep(new Random().nextInt(3000));
+                    log.debug("current time: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        threadPoolExecutor.shutdown();
 
 ### Executors
 
