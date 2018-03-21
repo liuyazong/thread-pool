@@ -26,6 +26,7 @@ public class ThreadTest {
 
     @Test
     public void test1() throws InterruptedException {
+
         Runnable runnable = () -> {
             log.debug("thread runnable test");
         };
@@ -33,6 +34,14 @@ public class ThreadTest {
         thread.start();
         thread.join();
         log.debug("thread {} finished, thread {} go on.", thread, Thread.currentThread());
+    }
+
+
+    @Test
+    public void test2() {
+        synchronized (this) {
+           int i=3;
+        }
     }
 
 
